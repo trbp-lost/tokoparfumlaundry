@@ -1,0 +1,18 @@
+{
+    "name": "tengk/tokoparfumlaundry",
+    "description": "college campus",
+    "autoload": {
+        "psr-4": {
+            "Tengk\\Tokoparfumlaundry\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "trbp-lost",
+            "email": "vinotengku@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/http-foundation": "^6.4"
+    }
+}

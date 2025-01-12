@@ -1,0 +1,22 @@
+{
+  "name": "tokoparfumlaundry",
+  "version": "1.0.0",
+  "description": "colege campus",
+  "main": "index.php",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trbp-lost/tokoparfumlaundry.git"
+  },
+  "author": "trbp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/trbp-lost/tokoparfumlaundry/issues"
+  },
+  "homepage": "https://github.com/trbp-lost/tokoparfumlaundry#readme",
+  "dependencies": {
+    "@vercel/edge-config": "^1.4.0"
+  }
+}
