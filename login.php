@@ -29,6 +29,7 @@
                     $_SESSION['status_login'] = true;
                     $_SESSION['a_global'] = $d;
                     $_SESSION['id'] = $d->admin_id;
+                    $_SESSION['admin'] = true;
                     echo '<script>window.location="dashboard.php"</script>';
                 }
 
@@ -38,6 +39,7 @@
                     $_SESSION['status_login'] = true;
                     $_SESSION['a_global'] = $d;
                     $_SESSION['id'] = $d->user_id;
+                    $_SESSION['admin'] = false;
                     echo '<script>window.location="/"</script>';
                 }
                 else{

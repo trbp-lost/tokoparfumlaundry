@@ -38,7 +38,7 @@ if ($result->num_rows > 0) {
 } else {
     $query = "INSERT INTO tb_keranjang (user_id, product_id, jumlah, harga) VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("iii", $user_id, $product_id, $quantity);
+    $stmt->bind_param("iiii", $user_id, $product_id, $quantity, $product_price);
     $stmt->execute();
 
     echo json_encode(['success' => true, 'message' => 'Produk berhasil ditambahkan ke keranjang.']);

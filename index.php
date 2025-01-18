@@ -1,4 +1,6 @@
 <?php
+    // error_reporting(0);
+
     include 'db.php';
     session_start();
 
@@ -29,7 +31,9 @@
                     echo '<ul><li><a href="login.php">Login</a></li></ul>';
                 } else{
                     echo '<ul><li><a href="logout.php">Logout</a></li></ul>';
-                    echo '<ul><li><a href="daftar_belanja.php">Keranjang</a></li></ul>';
+                    echo '<ul><li><a href="keranjang.php">Keranjang</a></li></ul>';
+                    
+                    if($_SESSION['admin'] == true)  echo'<ul><li><a href="dashboard.php">Dashboard</a></li></ul>';
                 }
             ?>
             <ul>

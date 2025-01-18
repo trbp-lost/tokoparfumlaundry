@@ -4,11 +4,6 @@
     include 'db.php';
     session_start();
 
-    $cek2 = mysqli_query($conn, "SELECT * FROM tb_user WHERE user_id = '".$_SESSION['id']."'");
-        if(mysqli_num_rows($cek2) > 0){
-            echo '<script>window.location="index.php"</script>';
-        }
-    
     if ($_SESSION['id'] == null )echo '<script>window.location="/"</script>';
     if($_SESSION['status_login'] != true) {
         echo '<script>window.location="login.php"</script>';

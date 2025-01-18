@@ -3,6 +3,10 @@
     include 'db.php';
     session_start();
 
+    if (!isset($_SESSION['status_login'])) {
+        $_SESSION['status_login'] = false;
+    }
+
     $kontak = mysqli_query($conn, "SELECT admin_name, admin_telp, admin_email, admin_address FROM tb_admin WHERE admin_id = 1");
     $a = mysqli_fetch_object($kontak);
 
@@ -23,21 +27,18 @@
     <header>
         <div class="container">
         <h1><a href="index.php">Toko Parfum Laundry</a></h1>
+        <?php
+            if($_SESSION['status_login'] != true) {
+                echo '<ul><li><a href="login.php">Login</a></li></ul>';
+            } else{
+                echo '<ul><li><a href="logout.php">Logout</a></li></ul>';
+                echo '<ul><li><a href="daftar_belanja.php">Keranjang</a></li></ul>';
+
+                if($_SESSION['admin'] == true)  echo'<ul><li><a href="dashboard.php">Dashboard</a></li></ul>';
+            }
+        ?>
         <ul>
             <li><a href="produk.php">Produk</a></li>
-        </ul>
-        <ul>
-            <?php
-                if (!isset($_SESSION['status_login'])) {
-                    $_SESSION['status_login'] = false;
-                }
-
-                if($_SESSION['status_login'] != true) {
-                    echo '<li><a href="login.php">Login</a></li>';
-                } else{
-                    echo '<li><a href="logout.php">Logout</a></li>';
-                }
-            ?>
         </ul>
         </div>
     </header>
