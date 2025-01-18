@@ -1,7 +1,5 @@
 <?php
     session_start();
-    // Cek data yang diterima di server
-
 
     if (!isset($_SESSION['status_login'])) {
         $_SESSION['status_login'] = false;
@@ -44,7 +42,7 @@
 </head>
 <body>
     <h1>Keranjang Belanja</h1>
-    <table>
+    <table id="cartTable">
         <thead>
             <tr>
                 <th>Nama Produk</th>
@@ -57,7 +55,10 @@
         <tbody id="cartTableBody"></tbody>
     </table>
     <br>
-    <button onclick="redirectToPayment()">Bayar</button>
+    <div>
+        <h3>Total Pembayaran: Rp <span id="totalAmount">0</span></h3>
+        <button onclick="redirectToPayment()">Bayar</button>
+    </div>
 
     <script>
         let cartItems = [];
@@ -79,6 +80,8 @@
 
         function renderCart(cartItems) {
             const cartTableBody = document.getElementById('cartTableBody');
+            const totalAmountElement = document.getElementById('totalAmount');
+            let totalAmount = 0;
             cartTableBody.innerHTML = '';
 
             cartItems.forEach(item => {
@@ -98,7 +101,9 @@
                         <td><button onclick="removeItem(${item.id})">Hapus</button></td>
                     </tr>
                 `;
+                totalAmount += totalPrice;
             });
+            totalAmountElement.textContent = totalAmount.toLocaleString();
         }
 
         function updateQuantity(id, change, manualValue = null) {
@@ -165,6 +170,8 @@
         }
 
         function redirectToPayment() {
+            const cartData = JSON.stringify(cartItems);
+            localStorage.setItem('cartData', cartData);
             window.location.href = 'bayar.php';
         }
 
