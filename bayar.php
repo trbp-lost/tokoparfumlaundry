@@ -21,14 +21,16 @@
     </table>
 
     <div>
-        <h3>Total Pembayaran: Rp <span id="totalAmount">0</span></h3>
-        <button onclick="processPayment()">Konfirmasi Pembayaran</button>
-    </div>
+    <h3>Total Pembayaran: Rp <span id="totalAmount">0</span></h3>
+    <form id="paymentForm" enctype="multipart/form-data">
+        <label for="paymentProof">Unggah Bukti Pembayaran:</label>
+        <input type="file" id="paymentProof" name="paymentProof" accept="image/*" required>
+        <button type="button" onclick="processPayment()">Konfirmasi Pembayaran</button>
+    </form>
 </body>
 </html>
 
 <script>
-// Function to display cart items from localStorage on the payment page
 function displayCart() {
     const cartData = JSON.parse(localStorage.getItem('cartData'));
     const paymentTableBody = document.getElementById('paymentTableBody');
@@ -56,23 +58,29 @@ function displayCart() {
 function processPayment() {
     const cartData = JSON.parse(localStorage.getItem('cartData'));
     const totalAmount = cartData.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const paymentProofInput = document.getElementById('paymentProof');
+
+    if (!paymentProofInput.files.length) {
+        alert('Harap unggah bukti pembayaran!');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('cartItems', JSON.stringify(cartData));
+    formData.append('totalAmount', totalAmount);
+    formData.append('paymentProof', paymentProofInput.files[0]);
 
     fetch('process_payment.php', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            cartItems: cartData,
-            totalAmount: totalAmount,
-        }),
+        body: formData,
     })
     .then(response => response.json())
     .then(data => {
+        console.log('Data yang diterima:', data);
         if (data.success) {
             alert('Pembayaran berhasil! Terima kasih.');
-            localStorage.removeItem('cartData'); // Clear cart data from localStorage
-            window.location.href = 'thank_you.php'; // Redirect to thank you page
+            localStorage.removeItem('cartData');
+            window.location.href = 'thank_you.php'; 
         } else {
             alert('Gagal melakukan pembayaran: ' + data.message);
         }
@@ -80,6 +88,5 @@ function processPayment() {
     .catch(error => alert('Terjadi kesalahan: ' + error.message));
 }
 
-// Display cart items on page load
 displayCart();
 </script>

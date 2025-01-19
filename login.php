@@ -30,6 +30,7 @@
                     $_SESSION['a_global'] = $d;
                     $_SESSION['id'] = $d->admin_id;
                     $_SESSION['admin'] = true;
+                    $_SESSION['username'] = $d->username;
                     echo '<script>window.location="dashboard.php"</script>';
                 }
 
@@ -40,6 +41,7 @@
                     $_SESSION['a_global'] = $d;
                     $_SESSION['id'] = $d->user_id;
                     $_SESSION['admin'] = false;
+                    $_SESSION['username'] = $d->username;
                     echo '<script>window.location="/"</script>';
                 }
                 else{

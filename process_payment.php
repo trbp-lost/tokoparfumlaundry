@@ -1,39 +1,71 @@
 <?php
 include 'db.php';
 session_start();
+header('Content-Type: application/json');
 
-$user_id = $_SESSION['id'];
-$data = json_decode(file_get_contents('php://input'), true);
+date_default_timezone_set('Asia/Jakarta');
+$user_id = $_SESSION['id']; 
+$username = $_SESSION['username']; 
+$targetDir = "bukti_bayar/";
+$conn->begin_transaction();
 
-// Memeriksa apakah data pembayaran lengkap
-if (isset($data['cartItems']) && isset($data['totalAmount'])) {
-    $cartItems = $data['cartItems'];
-    $totalAmount = $data['totalAmount'];
-
-    // Menyimpan transaksi pembayaran
-    $query = "INSERT INTO tb_pembayaran (user_id, total_amount, status, tanggal) VALUES (?, ?, 'pending', NOW())";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("ii", $user_id, $totalAmount);
-    $stmt->execute();
-    
-    if ($stmt->affected_rows > 0) {
-        $payment_id = $stmt->insert_id; // Ambil ID pembayaran yang baru saja disimpan
-
-        // Mengupdate status keranjang menjadi "selesai" setelah pembayaran berhasil
-        foreach ($cartItems as $item) {
-            $cart_id = $item['id'];
-            $query = "UPDATE tb_keranjang SET status = 'completed' WHERE keranjang_id = ? AND user_id = ?";
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param("ii", $cart_id, $user_id);
-            $stmt->execute();
-        }
-
-        // Mengembalikan respons sukses
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Gagal memproses pembayaran']);
-    }
-} else {
+if (!isset($_FILES['paymentProof']) || !isset($_POST['cartItems']) || !isset($_POST['totalAmount'])) {
     echo json_encode(['success' => false, 'message' => 'Data pembayaran tidak lengkap']);
+    exit;
+}
+
+$cartItems = json_decode($_POST['cartItems'], true); 
+// $cartItemsJSON = json_encode($cartItems);;
+$cartItemsJSON = $_POST['cartItems'];
+$totalAmount = $_POST['totalAmount'];
+
+try {
+    $query = "INSERT INTO tb_pembayaran 
+            (user_id, jumlah_harga, daftar_belanja, bukti_pembayaran, status_pembayaran, status_pesanan, tanggal) 
+            VALUES (?, ?, ?, '', 'confirm', 'pending', NOW())";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("iis", $user_id, $totalAmount, $cartItemsJSON);
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Pembayaran berhasil disimpanke database']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Gagal menyimpan pembayaran ke database']);
+        exit;
+    }
+
+    $pembayaran_id = $conn->insert_id;
+    
+    $date = date('Ymd-His');
+    $paymentProof = $_FILES['paymentProof']['name'];
+    $fileName = "pembayaran_{$pembayaran_id}-{$username}-{$date}.jpg";
+    $targetFilePath = $targetDir . $fileName;
+
+    if (move_uploaded_file($_FILES['paymentProof']['tmp_name'], $targetFilePath)) {
+        $updateQuery = "UPDATE tb_pembayaran SET bukti_pembayaran = ? WHERE pembayaran_id = ?";
+        $updateStmt = $conn->prepare($updateQuery);
+        $updateStmt->bind_param("si", $fileName, $pembayaran_id);
+        $updateStmt->execute();
+
+        echo json_encode(['success' => true, 'message' => 'Pembayaran berhasil disimpan']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Gagal menyimpan bukti pembayaran']);
+        exit;
+    }
+    
+    $payment_id = $conn->insert_id;
+    $queryDelete = "DELETE FROM tb_keranjang WHERE user_id = ?";
+    $stmtDelete = $conn->prepare($queryDelete);
+    $stmtDelete->bind_param("i", $user_id);
+    if ($stmtDelete->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Keranjang telah dihapus']);
+    } else{
+        echo json_encode(['success' => false, 'message' => 'Gagal menghapus keranjang']);
+        exit;
+    }
+
+    $conn->commit();
+    
+} catch (Exception $e) {
+    $conn->rollback();
+    echo json_encode(['success' => false, 'message' => "Terjadi kesalahan: " . $e->getMessage()]);
 }
 ?>
