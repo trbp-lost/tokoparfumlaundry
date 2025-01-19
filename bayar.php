@@ -59,7 +59,7 @@ function processPayment() {
     const cartData = JSON.parse(localStorage.getItem('cartData'));
     const totalAmount = cartData.reduce((total, item) => total + (item.price * item.quantity), 0);
     const paymentProofInput = document.getElementById('paymentProof');
-
+    console.log(cartData);
     if (!paymentProofInput.files.length) {
         alert('Harap unggah bukti pembayaran!');
         return;
@@ -72,11 +72,21 @@ function processPayment() {
 
     fetch('process_payment.php', {
         method: 'POST',
+        // headers: {
+        //     'Content-Type': 'application/json',
+        // },
         body: formData,
+        // body: JSON.stringify({
+        //     cartItems: cartData,
+        //     totalAmount: totalAmount,
+        //     paymentProof: paymentProofInput.files[0],
+        // }),
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Data yang diterima:', data);
+        console.log('Form data', formData);
+
+        console.log('Data yang diterima:', data.jj);
         if (data.success) {
             alert('Pembayaran berhasil! Terima kasih.');
             localStorage.removeItem('cartData');

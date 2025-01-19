@@ -2,7 +2,9 @@
 include 'db.php';
 session_start();
 header('Content-Type: application/json');
+error_reporting(0);
 
+echo json_encode($_POST['cartItems']);
 date_default_timezone_set('Asia/Jakarta');
 $user_id = $_SESSION['id']; 
 $username = $_SESSION['username']; 
@@ -15,9 +17,13 @@ if (!isset($_FILES['paymentProof']) || !isset($_POST['cartItems']) || !isset($_P
 }
 
 $cartItems = json_decode($_POST['cartItems'], true); 
-// $cartItemsJSON = json_encode($cartItems);;
-$cartItemsJSON = $_POST['cartItems'];
+$cartItemsJSON = json_encode($cartItems);;
+// $cartItemsJSON = $_POST['cartItems'];
 $totalAmount = $_POST['totalAmount'];
+
+if (json_last_error() !== JSON_ERROR_NONE) {
+    echo 'Kesalahan dalam parsing JSON: ' . json_last_error_msg();
+}
 
 try {
     $query = "INSERT INTO tb_pembayaran 
@@ -26,7 +32,7 @@ try {
     $stmt = $conn->prepare($query);
     $stmt->bind_param("iis", $user_id, $totalAmount, $cartItemsJSON);
     if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Pembayaran berhasil disimpanke database']);
+        echo json_encode(['success' => true, 'message' => 'Pembayaran berhasil disimpan ke database']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Gagal menyimpan pembayaran ke database']);
         exit;
@@ -61,6 +67,7 @@ try {
         echo json_encode(['success' => false, 'message' => 'Gagal menghapus keranjang']);
         exit;
     }
+    echo json_encode($cartItemsJSON);
 
     $conn->commit();
     
