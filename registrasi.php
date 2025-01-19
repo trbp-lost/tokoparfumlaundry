@@ -18,50 +18,78 @@
     <div class="box-login">
         <h2>Registrasi</h2>
         <form action="" method="POST">
-            <input type="text" name="user" placeholder="Username" class="input-control"> 
-            <input type="submit" name="checkUsername" value="Check Username" class="input-control btn">
+            <input type="text" name="user" placeholder="Username" id="username" class="input-control"> 
+            <button type="button" onclick="checkUsername()" class="input-control btn">Check Username</button>
             
-            <input type="text" name="name" placeholder="name" class="input-control">
-            <input type="text" name="address" placeholder="address" class="input-control">
-            <input type="password" name="pass" placeholder="Password" class="input-control">
-            <input type="password" name="confirm_pass" placeholder="Confirm Password" class="input-control">
-            <input type="submit" name="submit" value="Registrasi" class="btn">
+            <input type="password" name="pass" placeholder="Password" id="password" class="input-control">
+            <input type="password" name="confirm_pass" placeholder="Confirm Password" id="confirm_pass" class="input-control">
+            <input type="text" name="fullname" placeholder="full name" id="fullname" class="input-control">
+            <input type="number" name="telephone" placeholder="telephone" id="telp" class="input-control">
+            <input type="email" name="email" placeholder="email" id="email" class="input-control">
+            <textarea name="address" placeholder="address" id="address" class="input-control"></textarea>
+
+            <button type="button" onclick="CreateAccount()" class="btn">Registrasi</button>
         </form>
-        <?php
-            include 'db.php';
-            if(isset($_POST['checkUsername'])){
-                $user = mysqli_real_escape_string($conn, $_POST['user']);
-                $cek = mysqli_query($conn, "SELECT username FROM tb_admin WHERE username = '$user'");
+    <script>
+        
+function checkUsername() {
+    const cekUsername = document.getElementById('username').value;
 
-                if($cek && mysqli_num_rows($cek) > 0){
-                    echo '<script>alert("Username atau password anda salah!")</script>';
-                }else{
-                    echo '<script>window.location="dashboard.php"</script>';
-                }
-            }
+    fetch('cekusername.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            cekUsername: cekUsername,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Username tersedia.');
+        } else {
+            alert('Username tak tersedia.');
+        }
+    })
+    .catch(error => alert('Terjadi kesalahan cek Usename: ' + error.message));
+}
 
-            if(isset($_POST['submit'])){
-                session_start();
-
-                $user = mysqli_real_escape_string($conn, $_POST['user']);
-                $pass = mysqli_real_escape_string($conn, $_POST['pass']);
-                $confirm_pass = mysqli_real_escape_string($conn, $_POST['confirm_pass']);
-
-                $cek = mysqli_query($conn, "SELECT username FROM tb_admin WHERE username == $user");
-                if(mysqli_num_rows($cek) > 0){
-                    $d = mysqli_fetch_object($cek);
-                    $_SESSION['status_login'] = true;
-                    $_SESSION['a_global'] = $d;
-                    $_SESSION['id'] = $d->admin_id;
-                    echo '<script>window.location="dashboard.php"</script>';
-                    echo '<script>alert("Username atau password anda salah!")</script>';
-
-                }else{
-                    echo '<script>alert("Username atau password anda salah!")</script>';
-                }
-
-            }
-        ?>
-    </div>
+function CreateAccount() {
+    const cekUsername = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const confirm_pass = document.getElementById('confirm_pass').value;
+    const fullname = document.getElementById('fullname').value;
+    const telp = document.getElementById('telp').value;
+    const email = document.getElementById('email').value;
+    const address = document.getElementById('address').value;
+    
+    fetch('regis.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            cekUsername: cekUsername,
+            password: password,
+            confirm_pass: confirm_pass,
+            fullname: fullname,
+            telp: telp,
+            email: email,
+            address: address,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Akun Berhasil dibuat.');
+            window.location.href = 'dashboard.php'; 
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => alert('Terjadi kesalahan: ' + error.message));
+}
+</script>
 </body>
 </html>

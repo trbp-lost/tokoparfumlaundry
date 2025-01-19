@@ -29,6 +29,7 @@
             <?php
                 if($_SESSION['status_login'] != true) {
                     echo '<ul><li><a href="login.php">Login</a></li></ul>';
+                    echo '<ul><li><a href="registrasi.php">Register</a></li></ul>';
                 } else{
                     echo '<ul><li><a href="logout.php">Logout</a></li></ul>';
                     echo '<ul><li><a href="keranjang.php">Keranjang</a></li></ul>';

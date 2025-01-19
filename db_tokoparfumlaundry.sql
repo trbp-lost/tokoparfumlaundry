@@ -77,7 +77,9 @@ CREATE TABLE `tb_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `tb_user` (`user_id`, `username`, `password`, `name`, `user_telp`, `user_email`, `user_address`) VALUES
-(1, 'aa', 'aa', 'aa', '123', 'a@a.com', 'aa');
+(1, 'cc', 'cc', 'bb', '123', 'a@a.com', 'cc'),
+(2, 'aa', 'aa', 'aa', '123', 'a@a.com', 'aa'),
+(3, 'bb', 'bb', 'aa', '123', 'a@a.com', 'bb');
 
 ALTER TABLE `tb_admin`
   ADD PRIMARY KEY (`admin_id`);
@@ -87,10 +89,12 @@ ALTER TABLE `tb_category`
 
 ALTER TABLE `tb_keranjang`
   ADD PRIMARY KEY (`keranjang_id`),
-  ADD KEY `user_id` (`user_id`,`product_id`);
+  ADD KEY `user_id` (`user_id`,`product_id`),
+  ADD KEY `tb_keranjang_ibfk_2` (`product_id`);
 
 ALTER TABLE `tb_pembayaran`
-  ADD PRIMARY KEY (`pembayaran_id`);
+  ADD PRIMARY KEY (`pembayaran_id`),
+  ADD KEY `user_id` (`user_id`);
 
 ALTER TABLE `tb_product`
   ADD PRIMARY KEY (`product_id`),
@@ -107,7 +111,7 @@ ALTER TABLE `tb_category`
   MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 ALTER TABLE `tb_keranjang`
-  MODIFY `keranjang_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `keranjang_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 ALTER TABLE `tb_pembayaran`
   MODIFY `pembayaran_id` int(128) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
@@ -115,10 +119,12 @@ ALTER TABLE `tb_pembayaran`
 ALTER TABLE `tb_product`
   MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
-ALTER TABLE `tb_keranjang`
-  ADD CONSTRAINT `tb_keranjang_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `tb_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `tb_keranjang_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `tb_product` (`product_id`);
+ALTER TABLE `tb_user`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
-ALTER TABLE `tb_pembayaran`
-  ADD CONSTRAINT `tb_pembayaran_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `tb_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `tb_keranjang`
+  ADD CONSTRAINT `tb_keranjang_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `tb_product` (`product_id`),
+  ADD CONSTRAINT `tb_keranjang_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `tb_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+R TABLE `tb_pembayaran`
+  ADD CONSTRAINT `tb_pembayaran_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `tb_user` (`user_id`);
 COMMIT;
