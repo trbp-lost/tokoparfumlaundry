@@ -41,7 +41,6 @@
             <h3>Dashboard</h3>
             <div class="box">
                 <h4>Selamat Datang <?php echo $_SESSION['a_global']->admin_name ?> Di Toko Parfum Laundry Online</h4>
-                <p><a href="tambah-produk.php">Tambah Data</a></p>
                 <table border="1" cellspacing="0" class="table">
                     <thead>
                         <tr>
@@ -66,7 +65,7 @@
                                 $daftar_belanja = json_decode($row['daftar_belanja'], true);
                         ?>
                         <tr style="background-color: <?= ($row['status_pesanan'] == 'confirm') ? "green" : (($row['status_pesanan'] == 'decline') ? "red" : "") ?>;">
-                            <td style="color: <?= ($row['status_pesanan'] == 'pending') ? "" : "white" ?>;"><?= $no++ ?></td>td
+                            <td style="color: <?= ($row['status_pesanan'] == 'pending') ? "" : "white" ?>;"><?= $no++ ?></td>
                             <td style="color: <?= ($row['status_pesanan'] == 'pending') ? "" : "white" ?>;"><?= $row['tanggal'] ?></td>
                             <td style="color: <?= ($row['status_pesanan'] == 'pending') ? "" : "white" ?>;"><?= $row['name'] ?></td>
                             <td style="color: <?= ($row['status_pesanan'] == 'pending') ? "" : "white" ?>;"><?= $row['user_address'] ?></td>
